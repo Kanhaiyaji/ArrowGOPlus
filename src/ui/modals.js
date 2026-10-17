@@ -322,9 +322,14 @@ export class ModalManager {
                   <span style="font-weight:700;">📱 Android App (APK)</span>
                   <p class="setting-subtext">Install on your Android phone</p>
                 </div>
-                <a href="/ArrowGOPlus.apk" download="ArrowGOPlus.apk" class="btn btn-primary btn-sm" style="text-decoration:none;">
-                  ⬇️ APK (4.1 MB)
-                </a>
+                <div style="display:flex; gap:8px;">
+                  <a href="/ArrowGOPlus.apk" download="ArrowGOPlus.apk" class="btn btn-primary btn-sm" style="text-decoration:none;">
+                    ⬇️ Local APK
+                  </a>
+                  <a href="https://github.com/Kanhaiyaji/ArrowGOPlus/releases/latest/download/ArrowGOPlus.apk" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="text-decoration:none;">
+                    🌐 GitHub Release
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -575,9 +580,14 @@ export class ModalManager {
                 </button>
               </div>
             `}
-            <a href="/ArrowGOPlus.apk" download="ArrowGOPlus.apk" class="btn btn-primary full-width" style="margin-top: 10px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              📱 Download Android APK (4.1 MB)
-            </a>
+            <div style="display:flex; gap:8px; margin-top: 10px;">
+              <a href="/ArrowGOPlus.apk" download="ArrowGOPlus.apk" class="btn btn-primary" style="flex:1; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.9rem;">
+                📱 Download Local APK
+              </a>
+              <a href="https://github.com/Kanhaiyaji/ArrowGOPlus/releases/latest/download/ArrowGOPlus.apk" target="_blank" rel="noopener" class="btn btn-secondary" style="flex:1; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.9rem;">
+                🌐 GitHub Release APK
+              </a>
+            </div>
           </div>
         </div>
       </div>
