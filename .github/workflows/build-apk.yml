@@ -53,7 +53,14 @@ jobs:
         run: npm run build
 
       - name: Sync Capacitor Android Project
-        run: npx cap sync android --inline
+        run: |
+          npx cap sync android --verbose 2>&1 | tee sync.log || {
+            echo "### Capacitor Sync Error Details" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat sync.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Build Debug APK with Gradle
         run: |
