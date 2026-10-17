@@ -1,0 +1,18 @@
+{
+  "name": "Arrow GO+ - Puzzle Escape",
+  "short_name": "Arrow GO+",
+  "description": "Minimalist arrow logic puzzle escape game with 25+ handcrafted levels, endless mode, and custom puzzle editor",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

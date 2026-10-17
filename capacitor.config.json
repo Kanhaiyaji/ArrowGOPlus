@@ -1,0 +1,13 @@
+{
+  "appId": "com.arrowpuzzle.arrowgoplus",
+  "appName": "Arrow GO+",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0F172A",
+    "allowMixedContent": true
+  }
+}
