@@ -27,21 +27,17 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '21'
-          cache: 'gradle'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Accept Android Licenses & Ensure SDK Tools
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
-
-      - name: Set up Node.js
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
+
+      - name: Accept Android Licenses & Ensure SDK Tools
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
 
       - name: Install Node Dependencies
         run: npm ci
@@ -75,22 +71,22 @@ jobs:
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest' }}
-          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'Arrow GO+ Android Build (Latest)' }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'Arrow GO+ v1.0.0 (Latest APK)' }}
           body: |
-            ## 🏹 Arrow GO+ Android Mobile App (Latest Release)
+            ## 🏹 Arrow GO+ Android Mobile App
 
-            Automated APK release compiled and built directly by GitHub Actions.
+            Official Android APK release built automatically by GitHub Actions CI/CD.
 
-            ### 📲 Direct APK Download:
-            - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest' }}/ArrowGOPlus.apk)**
+            ### 📲 Direct APK Download (Single Tap Install):
+            - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}/ArrowGOPlus.apk)**
 
-            ### 🎮 Highlights & Features:
-            - **108 Handcrafted & Procedural Levels** across 3 Master Tiers (Beginner, Intermediate, Trained)
+            ### 🎮 Features:
+            - **108 Handcrafted Levels** across 3 Tiers (Beginner, Intermediate, Trained)
             - **Google OAuth Login** via Supabase
             - **Cloud Save & Sync** across sessions
-            - **Haptic Feedback & Web Audio** sound engine
-            - **Offline Play & Level Solver**
+            - **Web Audio & Haptic Feedback**
+            - **Offline Puzzle Engine & Level Editor**
           files: ArrowGOPlus.apk
           prerelease: false
           make_latest: true
