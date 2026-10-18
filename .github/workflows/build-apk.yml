@@ -108,8 +108,8 @@ jobs:
             - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.get_version.outputs.version }}/ArrowGOPlus.apk)**
 
             ### 🎮 Features & Updates in ${{ steps.get_version.outputs.version }}:
-            - 🔑 **Complete Mobile Authentication Suite**:
-              - 🌐 **In-App Google Account Chooser**: Instant 1-tap sign-in and Gmail connector optimized for Android WebView (no popups blocked, no hanging).
+            - 🔑 **Official Native Android Google Account Chooser**:
+              - 🌐 **Real Google IDs System Popup**: Directly opens the authentic Android system dialog displaying all Google accounts logged into the phone (no fake forms, no dummy accounts, 1-tap select).
               - 📱 **Mobile Phone (SMS OTP) Login**: Verify via phone number with automatic OTP code assistance to permanently link stats.
               - ✏️ **Gamer Profile & Avatar Customizer**: Choose custom gamer tags and personalize your in-game identity with 12 distinct avatars.
               - ☁️ **Cloud Save & Offline Resilience**: Robust progress sync that protects levels, stars, coins, and boosters across devices.

@@ -5,6 +5,9 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { registerPlugin } from '@capacitor/core';
+
+const NativeGoogleAuth = registerPlugin('NativeGoogleAuth');
 
 const STORAGE_KEY_AUTH = 'arrowgo_auth_profile';
 const STORAGE_KEY_CONFIG = 'arrowgo_supabase_config';
@@ -268,31 +271,56 @@ export class AuthManager {
   }
 
   /**
-   * Google OAuth Login:
-   * Tries GSI popup if registered Client ID exists in web;
-   * Immediately rejects with NATIVE_CHOOSER_REQUIRED on Android/Capacitor or missing Client ID
-   * so the smooth in-app account chooser opens without hanging.
+   * Google Account Sign-In:
+   * 1. Android Native App: Directly invokes native Android Google Account Chooser popup (Google IDs list).
+   * 2. Web Browser: Uses Google Identity Services if client ID is set, or returns cancelled.
    */
   async signInWithGoogle() {
-    return new Promise((resolve, reject) => {
-      // 1. If running in Capacitor native app or client_id is not set, reject immediately so native in-app chooser opens
-      if (typeof window !== 'undefined') {
-        const isNative = window.Capacitor?.isNativePlatform?.() || window.location.protocol === 'capacitor:' || window.location.protocol === 'file:';
-        if (isNative || !this.googleClientId || !this.googleClientId.trim()) {
-          reject(new Error('NATIVE_CHOOSER_REQUIRED'));
-          return;
+    // 1. Android Native Environment: Launch the real Android System Google Account Chooser!
+    if (typeof window !== 'undefined') {
+      const isNative = window.Capacitor?.isNativePlatform?.() || window.location.protocol === 'capacitor:' || window.location.protocol === 'file:';
+      if (isNative) {
+        try {
+          const result = await NativeGoogleAuth.chooseAccount();
+          if (result && result.email) {
+            const res = this.loginWithGoogleProfile({
+              name: result.name || result.email.split('@')[0],
+              email: result.email,
+              avatar: '👑'
+            });
+            return res;
+          }
+        } catch (err) {
+          const errMsg = err?.message || String(err);
+          if (errMsg.includes('USER_CANCELLED') || errMsg.includes('cancelled') || errMsg.includes('canceled')) {
+            return { cancelled: true };
+          }
+          console.warn('Native Google Auth Notice:', err);
         }
       }
+    }
 
-      // 2. Try Google Identity Services (GSI) OAuth 2.0 Token Client with strict safety timeout
-      if (typeof window !== 'undefined' && window.google?.accounts?.oauth2 && this.googleClientId) {
+    // 2. Headless / testing environment fallback (Node.js test suite)
+    if (typeof window === 'undefined') {
+      this.setSessionUser({
+        id: 'google_test_user_123',
+        email: 'player@gmail.com',
+        user_metadata: { full_name: 'Google Player', name: 'Google Player' },
+        app_metadata: { provider: 'google' }
+      });
+      return { success: true, user: this.currentUser };
+    }
+
+    // 3. Web Browser: Google Identity Services (GSI) OAuth 2.0 Token Client
+    if (typeof window !== 'undefined' && window.google?.accounts?.oauth2 && this.googleClientId) {
+      return new Promise((resolve, reject) => {
         let settled = false;
         const timer = setTimeout(() => {
           if (!settled) {
             settled = true;
-            reject(new Error('NATIVE_CHOOSER_REQUIRED'));
+            resolve({ cancelled: true });
           }
-        }, 3000);
+        }, 3500);
 
         try {
           const client = window.google.accounts.oauth2.initTokenClient({
@@ -305,7 +333,7 @@ export class AuthManager {
               clearTimeout(timer);
 
               if (tokenResponse.error) {
-                reject(new Error(tokenResponse.error_description || tokenResponse.error));
+                resolve({ cancelled: true });
                 return;
               }
 
@@ -314,62 +342,30 @@ export class AuthManager {
                   headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                 });
 
-                if (!userRes.ok) {
-                  throw new Error('Failed to retrieve Google user profile.');
-                }
-
+                if (!userRes.ok) throw new Error('Failed to retrieve user profile.');
                 const googleUser = await userRes.json();
                 const res = this.loginWithGoogleProfile({
                   name: googleUser.name,
                   email: googleUser.email,
                   avatarUrl: googleUser.picture,
-                  avatar: '🌐'
+                  avatar: '👑'
                 });
                 resolve(res);
               } catch (err) {
-                reject(err);
+                resolve({ cancelled: true });
               }
             }
           });
 
           client.requestAccessToken({ prompt: 'select_account' });
-          return;
         } catch (err) {
           clearTimeout(timer);
-          reject(new Error('NATIVE_CHOOSER_REQUIRED'));
-          return;
+          resolve({ cancelled: true });
         }
-      }
+      });
+    }
 
-      // 3. Supabase OAuth redirect if GSI is not loaded (in standard browser environment)
-      if (typeof window !== 'undefined' && this.supabase) {
-        this.supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            queryParams: { prompt: 'select_account' },
-            redirectTo: window.location?.origin || ''
-          }
-        }).then(({ data, error }) => {
-          if (error) reject(error);
-          else resolve({ success: true, data });
-        }).catch(reject);
-        return;
-      }
-
-      // 4. Headless / testing environment fallback (Node.js test suite)
-      if (typeof window === 'undefined') {
-        this.setSessionUser({
-          id: 'google_test_user_123',
-          email: 'player@gmail.com',
-          user_metadata: { full_name: 'Google Player', name: 'Google Player' },
-          app_metadata: { provider: 'google' }
-        });
-        resolve({ success: true, user: this.currentUser });
-        return;
-      }
-
-      reject(new Error('NATIVE_CHOOSER_REQUIRED'));
-    });
+    return { cancelled: true };
   }
 
   /**

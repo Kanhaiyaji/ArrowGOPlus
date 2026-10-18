@@ -659,30 +659,20 @@ class ArrowGoGame {
         try {
           const res = await this.auth.signInWithGoogle();
           if (res?.user) {
-            this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Google Connected! 🌐', '#00F0FF', 22);
+            this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, `${res.user.displayName} Connected! 🌐`, '#00F0FF', 22);
             audio.playLevelComplete();
             await this.syncToCloud(false);
             this.updateHUD();
             this.showUserProfile();
             return;
           }
+          if (res?.cancelled) {
+            // User dismissed native account picker
+            return;
+          }
         } catch (e) {
-          console.log('Opening native In-App Google Account Chooser:', e.message);
+          console.warn('Google Sign-In notice:', e);
         }
-
-        const accounts = this.auth.getRecentAccounts();
-        this.modals.showGoogleAccountChooser(accounts, async (acc) => {
-          this.auth.loginWithGoogleProfile({
-            name: acc.name,
-            email: acc.email,
-            avatar: acc.avatar
-          });
-          this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, `${acc.name} Connected! 🌐`, '#00F0FF', 22);
-          audio.playLevelComplete();
-          await this.syncToCloud(false);
-          this.updateHUD();
-          this.showUserProfile();
-        });
       },
       onPhoneLogin: () => {
         this.modals.showPhoneLoginModal({

@@ -1,6 +1,6 @@
 {
   "name": "arrow-go-plus",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Arrow GO+ - Reverse-engineered Arrow Puzzle Escape logic game with procedural generation, handcrafted levels, interactive solver, level editor, and procedural Web Audio",
   "main": "index.html",
   "type": "module",
