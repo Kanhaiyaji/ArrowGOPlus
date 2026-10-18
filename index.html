@@ -119,7 +119,8 @@
 
   <script type="module" src="/src/main.js"></script>
   <script>
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    // Only register service worker for web browser PWA, NOT inside Capacitor native app
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http') && !window.Capacitor?.isNativePlatform()) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
       });

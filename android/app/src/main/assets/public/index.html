@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0F172A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Arrow GO+ | Logic Puzzle Escape</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <!-- Google Identity Services for real Google OAuth account chooser -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script type="module" crossorigin src="./assets/index-nukmwKN7.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BwJvlS0u.css">
+</head>
+<body class="theme-dark">
+  <div id="app">
+    <!-- Top Mobile Navigation Bar (Faithful to Google Play Screenshots) -->
+    <header class="app-header">
+      <button class="circular-nav-btn blue" id="nav-back" title="Level Map">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </button>
+
+      <div class="header-center">
+        <h1 class="level-title-gold" id="hud-level-title">Level 1</h1>
+        <div class="hud-hearts" id="hud-hearts">
+          <span class="heart active">❤️</span>
+          <span class="heart active">❤️</span>
+          <span class="heart active">❤️</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="circular-nav-btn purple profile-nav-btn" id="nav-profile" title="Player Profile & Cloud Save">
+          <span class="profile-avatar-mini" id="hud-profile-avatar">👤</span>
+        </button>
+        <button class="circular-nav-btn amber" id="nav-shop" title="Coin Shop & Refills">
+          <span class="shop-icon">🪙</span>
+        </button>
+        <button class="circular-nav-btn blue" id="nav-settings" title="Settings">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sub-HUD Status: Arrows Left, Progress Bar, Coins Balance -->
+    <div class="sub-hud-bar">
+      <div class="arrow-counter-badge" id="hud-arrows-badge" title="Remaining Arrows">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+          <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/>
+        </svg>
+        <span id="hud-remaining">4</span>
+      </div>
+
+      <div class="level-progress-container">
+        <div class="level-progress-bar" id="hud-progress-fill" style="width: 0%;"></div>
+      </div>
+
+      <div class="coins-pill" id="btn-open-shop" title="Coins (Tap for Shop)">
+        <span>🪙</span>
+        <span id="hud-coins">150</span>
+      </div>
+    </div>
+
+    <!-- Mode Selector Tabs Bar -->
+    <div class="mode-tabs-bar" id="mode-tabs-bar">
+      <button class="mode-tab-btn active" id="tab-mode-campaign" data-mode="campaign">
+        <span class="tab-icon">🎯</span> Campaign
+      </button>
+      <button class="mode-tab-btn" id="tab-mode-vortex" data-mode="vortex">
+        <span class="tab-icon">⭕</span> Vortex Circle
+      </button>
+      <button class="mode-tab-btn" id="tab-mode-endless" data-mode="endless">
+        <span class="tab-icon">♾️</span> Endless
+      </button>
+    </div>
+
+    <!-- Optional Editor Bar -->
+    <div id="editor-bar" class="hidden"></div>
+
+    <!-- Game Board Canvas Container -->
+    <main id="board-container">
+      <div id="tutorial-toast" class="tutorial-toast hidden">
+        <span>👆 Tap an arrow with a clear path to the edge!</span>
+      </div>
+      <canvas id="game-canvas"></canvas>
+      <canvas id="vfx-canvas"></canvas>
+    </main>
+
+    <!-- Bottom Booster Dock (Faithful to Screenshots) -->
+    <footer class="booster-dock">
+      <button class="booster-circle-btn blue" id="booster-undo" title="Undo Move">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+          <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C20.88 11.02 17.07 8 12.5 8z"/>
+        </svg>
+      </button>
+      <button class="booster-circle-btn amber" id="booster-hint" title="Hint Free Path">
+        <span class="badge-count">2</span>
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+          <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
+        </svg>
+      </button>
+      <button class="booster-circle-btn green" id="booster-bomb" title="Auto Solve / Skip">
+        <span class="badge-count">1</span>
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+          <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+        </svg>
+      </button>
+    </footer>
+
+    <!-- Dynamic Modal Overlays -->
+    <div id="modal-container"></div>
+  </div>
+
+  <script>
+    // Only register service worker for web browser PWA, NOT inside Capacitor native app
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http') && !window.Capacitor?.isNativePlatform()) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
