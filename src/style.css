@@ -1695,12 +1695,83 @@ input:checked + .slider:before {
 .tier-p-fill.intermediate { background: linear-gradient(90deg, #FFE600, #FF7700); }
 .tier-p-fill.trained { background: linear-gradient(90deg, #FF0055, #B026FF); }
 
-/* --- Google Account Chooser Modal --- */
-.google-chooser-container {
+/* --- Google Account Chooser & Auth Form Elements --- */
+.google-chooser-modal, .phone-login-modal, .edit-profile-modal {
+  max-width: 390px;
+}
+
+.avatar-edit-icon {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid #38BDF8;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon-mini {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.2s;
+  padding: 2px 4px;
+}
+
+.btn-icon-mini:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.auth-buttons-grid {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 16px 0;
+  width: 100%;
+}
+
+.btn-phone-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(0, 255, 157, 0.4);
+  color: #ECFDF5;
+  font-weight: 700;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  transition: all 0.2s ease;
+}
+
+.btn-phone-auth:hover {
+  background: rgba(0, 255, 157, 0.15);
+  border-color: #00FF9D;
+  box-shadow: 0 0 14px rgba(0, 255, 157, 0.3);
+}
+
+.profile-footer-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+}
+
+.google-chooser-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
 }
 
 .google-account-btn {
@@ -1721,14 +1792,14 @@ input:checked + .slider:before {
 .google-account-btn:hover {
   background: rgba(56, 189, 248, 0.15);
   border-color: #38BDF8;
-  transform: translateX(3px);
+  transform: translateX(2px);
 }
 
 .google-acc-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #3B82F6;
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6);
   color: #FFF;
   display: flex;
   align-items: center;
@@ -1750,6 +1821,193 @@ input:checked + .slider:before {
 .google-acc-email {
   font-size: 0.72rem;
   color: #94A3B8;
+}
+
+.one-tap-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.account-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 14px 0 10px 0;
+}
+
+.account-divider::before,
+.account-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.account-divider span {
+  padding: 0 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748B;
+  letter-spacing: 0.5px;
+}
+
+.inapp-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94A3B8;
+}
+
+.modal-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #F8FAFC;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #00F0FF;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.avatar-select-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.avatar-chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.avatar-chip:hover {
+  transform: scale(1.1);
+  border-color: #38BDF8;
+}
+
+.avatar-chip.active {
+  border-color: #00F0FF;
+  background: rgba(0, 240, 255, 0.2);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+  transform: scale(1.12);
+}
+
+/* Phone Input & OTP Field */
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.phone-prefix {
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #38BDF8;
+  background: rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.phone-field {
+  border: none;
+  background: transparent;
+  flex: 1;
+}
+
+.otp-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  color: #F8FAFC;
+}
+
+.otp-large-field {
+  text-align: center;
+  font-size: 1.5rem !important;
+  letter-spacing: 8px;
+  font-weight: 800;
+  font-family: monospace;
+}
+
+/* Light Theme Overrides */
+body.theme-light .google-account-btn {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+body.theme-light .google-acc-name {
+  color: #0F172A;
+}
+
+body.theme-light .modal-input {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+body.theme-light .phone-input-wrapper {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+body.theme-light .btn-phone-auth {
+  background: #F8FAFC;
+  border-color: #059669;
+  color: #065F46;
+}
+
+body.theme-light .avatar-chip {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+}
+
+body.theme-light .avatar-chip.active {
+  background: rgba(2, 132, 199, 0.12);
+  border-color: #0284C7;
 }
 
 /* ========================================================

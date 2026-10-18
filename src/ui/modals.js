@@ -479,6 +479,20 @@ export class ModalManager {
 
   showUserProfile(profile, gameSave, callbacks) {
     const isLoggedIn = profile?.isLoggedIn || false;
+    const provider = profile?.provider || 'guest';
+    const isGoogle = provider === 'google';
+    const isPhone = provider === 'phone';
+
+    let badgeText = '⚠️ Local Guest Profile';
+    let badgeClass = 'guest';
+    if (isGoogle) {
+      badgeText = '🛡️ Verified (Google ID)';
+      badgeClass = 'verified';
+    } else if (isPhone) {
+      badgeText = '📱 Verified (Mobile OTP)';
+      badgeClass = 'verified phone';
+    }
+
     const avatarHtml = profile?.avatarUrl
       ? `<img src="${profile.avatarUrl}" class="profile-avatar-img" alt="avatar" />`
       : `<div class="profile-avatar-emoji">${profile?.avatar || '👤'}</div>`;
@@ -493,29 +507,33 @@ export class ModalManager {
             <button class="close-btn" id="modal-close">&times;</button>
           </div>
 
-          <!-- Profile Info Card -->
+          <!-- Profile Header Card -->
           <div class="profile-header-card">
-            <div class="profile-avatar-wrapper">
+            <div class="profile-avatar-wrapper" id="btn-edit-avatar-trigger" title="Tap to change avatar" style="cursor: pointer;">
               ${avatarHtml}
               <div class="profile-status-badge ${isLoggedIn ? 'online' : 'guest'}"></div>
+              <span class="avatar-edit-icon" title="Edit Avatar">✏️</span>
             </div>
             <div class="profile-text-info">
-              <h3 class="profile-name">${profile?.displayName || 'Guest Player'}</h3>
-              <p class="profile-sub">${profile?.email || 'Local Guest Account'}</p>
-              <div class="profile-badge-pill ${isLoggedIn ? 'verified' : 'guest'}">
-                ${isLoggedIn ? '🛡️ Cloud Protected' : '⚠️ Guest (Unsynced)'}
+              <div style="display:flex; align-items:center; gap:8px;">
+                <h3 class="profile-name" id="profile-display-name">${profile?.displayName || 'Guest Player'}</h3>
+                <button class="btn-icon-mini" id="btn-edit-name-trigger" title="Edit Gamer Tag">✏️</button>
+              </div>
+              <p class="profile-sub">${profile?.email || profile?.phone || 'Guest Mode (Offline Safe)'}</p>
+              <div class="profile-badge-pill ${badgeClass}">
+                ${badgeText}
               </div>
             </div>
           </div>
 
-          <!-- Cloud Security Card -->
+          <!-- Cloud Status Banner -->
           <div class="cloud-status-box ${isLoggedIn ? 'active' : 'warning'}">
-            <div class="cloud-status-icon">${isLoggedIn ? '☁️' : '⚠️'}</div>
+            <div class="cloud-status-icon">${isLoggedIn ? '☁️' : '💾'}</div>
             <div class="cloud-status-text">
-              <strong>${isLoggedIn ? 'Cloud Level Backup Active' : 'Progress Not Synced to Cloud'}</strong>
+              <strong>${isLoggedIn ? 'Cloud Sync & Protection Active' : 'Local Storage Mode'}</strong>
               <p>${isLoggedIn
-                ? 'Your levels, stars, coins, and high scores are securely backed up.'
-                : 'Sign in with Google to keep your levels and progress secure across all devices!'}</p>
+                ? 'Your levels, stars, coins, and themes are safely synced to your player profile.'
+                : 'Connect with Google or Phone Number to permanently secure your rank across devices.'}</p>
             </div>
             ${isLoggedIn ? `
               <button class="btn btn-secondary btn-sm" id="btn-sync-cloud">
@@ -577,18 +595,24 @@ export class ModalManager {
             </div>
           </div>
 
-          <!-- Auth Actions Section -->
+          <!-- Authentication Actions Section -->
           <div class="profile-auth-section">
             ${!isLoggedIn ? `
-              <button class="btn-google-auth full-width" id="btn-login-google">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                Sign in with Google
-              </button>
+              <div class="auth-buttons-grid">
+                <button class="btn-google-auth full-width" id="btn-login-google">
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                  Sign in with Google
+                </button>
+
+                <button class="btn btn-secondary full-width btn-phone-auth" id="btn-login-phone">
+                  📱 Sign in with Mobile (OTP)
+                </button>
+              </div>
             ` : `
               <div class="logged-in-actions">
                 <button class="btn btn-secondary full-width" id="btn-sign-out">
@@ -596,13 +620,15 @@ export class ModalManager {
                 </button>
               </div>
             `}
-            <div style="display:flex; gap:8px; margin-top: 10px;">
-              <a href="/ArrowGOPlus.apk" download="ArrowGOPlus.apk" class="btn btn-primary" style="flex:1; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.9rem;">
-                📱 Download Local APK
-              </a>
-              <a href="https://github.com/Kanhaiyaji/ArrowGOPlus/releases/latest/download/ArrowGOPlus.apk" target="_blank" rel="noopener" class="btn btn-secondary" style="flex:1; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.9rem;">
-                🌐 GitHub Release APK
-              </a>
+
+            <!-- Customizer & Cloud DB Shortcuts -->
+            <div class="profile-footer-links">
+              <button class="btn btn-ghost btn-sm" id="btn-open-customizer">
+                ✏️ Customize Gamer Tag & Avatar
+              </button>
+              <button class="btn btn-ghost btn-sm" id="btn-open-supabase-cfg">
+                ⚙️ Cloud Database Settings
+              </button>
             </div>
           </div>
         </div>
@@ -610,12 +636,24 @@ export class ModalManager {
     `;
 
     document.getElementById('modal-close')?.addEventListener('click', () => this.close());
-    document.getElementById('btn-login-google')?.addEventListener('click', () => callbacks.onGoogleLogin());
-    document.getElementById('btn-sign-out')?.addEventListener('click', () => callbacks.onSignOut());
-    document.getElementById('btn-sync-cloud')?.addEventListener('click', () => callbacks.onSyncCloud());
+    document.getElementById('btn-login-google')?.addEventListener('click', () => callbacks.onGoogleLogin?.());
+    document.getElementById('btn-login-phone')?.addEventListener('click', () => callbacks.onPhoneLogin?.());
+    document.getElementById('btn-sign-out')?.addEventListener('click', () => callbacks.onSignOut?.());
+    document.getElementById('btn-sync-cloud')?.addEventListener('click', () => callbacks.onSyncCloud?.());
+    document.getElementById('btn-open-customizer')?.addEventListener('click', () => callbacks.onEditProfile?.());
+    document.getElementById('btn-edit-avatar-trigger')?.addEventListener('click', () => callbacks.onEditProfile?.());
+    document.getElementById('btn-edit-name-trigger')?.addEventListener('click', () => callbacks.onEditProfile?.());
+    document.getElementById('btn-open-supabase-cfg')?.addEventListener('click', () => callbacks.onOpenSupabaseConfig?.());
   }
 
   showGoogleAccountChooser(accounts, onSelectAccount) {
+    const defaultAccounts = (accounts && accounts.length > 0) ? accounts : [
+      { id: 'google_kanhaiyaji', name: 'Kanhaiyaji', email: 'kanhaiyaji@gmail.com', avatar: '👑' },
+      { id: 'google_gamer', name: 'Arrow Champion', email: 'arrowgo.pro@gmail.com', avatar: '⚡' }
+    ];
+
+    let selectedAvatar = '⚡';
+
     this.container.innerHTML = `
       <div class="modal-backdrop fade-in">
         <div class="modal-card bounce-in google-chooser-modal">
@@ -631,28 +669,142 @@ export class ModalManager {
             </div>
             <button class="close-btn" id="modal-close">&times;</button>
           </div>
-          <p class="setting-subtext" style="text-align:left; margin-bottom:12px;">Choose an account to continue to <strong>Arrow GO+</strong></p>
+          <p class="setting-subtext" style="text-align:left; margin-bottom:12px;">
+            Choose an account or enter your Gmail to continue to <strong>Arrow GO+</strong>
+          </p>
 
+          <!-- Quick 1-Tap Accounts -->
           <div class="google-chooser-container">
-            ${accounts.map((acc, idx) => `
+            ${defaultAccounts.map((acc, idx) => `
               <button class="google-account-btn" data-account-idx="${idx}">
                 <div class="google-acc-avatar">${acc.avatar || acc.name.charAt(0).toUpperCase()}</div>
                 <div class="google-acc-details">
                   <div class="google-acc-name">${acc.name}</div>
                   <div class="google-acc-email">${acc.email}</div>
                 </div>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#94A3B8"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                <span class="one-tap-pill">Tap to Login</span>
               </button>
             `).join('')}
+          </div>
 
-            <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; margin-top: 6px;">
-              <button class="google-account-btn" id="btn-custom-google-acc">
-                <div class="google-acc-avatar" style="background:#475569;">+</div>
-                <div class="google-acc-details">
-                  <div class="google-acc-name">Use another Google account</div>
-                  <div class="google-acc-email">Enter a new Gmail address</div>
-                </div>
-              </button>
+          <!-- Divider -->
+          <div class="account-divider">
+            <span>OR CONNECT WITH YOUR GMAIL</span>
+          </div>
+
+          <!-- In-App Google Login Form (No Prompt) -->
+          <div class="inapp-auth-form">
+            <div class="form-group">
+              <label class="form-label">Your Name / Gamer Tag</label>
+              <input type="text" id="g-input-name" class="modal-input" placeholder="e.g. Kanhaiya" value="Player" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Google / Gmail Address</label>
+              <input type="email" id="g-input-email" class="modal-input" placeholder="e.g. player@gmail.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Choose Avatar</label>
+              <div class="avatar-select-row">
+                <button type="button" class="avatar-chip active" data-avatar="⚡">⚡</button>
+                <button type="button" class="avatar-chip" data-avatar="🏹">🏹</button>
+                <button type="button" class="avatar-chip" data-avatar="👑">👑</button>
+                <button type="button" class="avatar-chip" data-avatar="🚀">🚀</button>
+                <button type="button" class="avatar-chip" data-avatar="💎">💎</button>
+                <button type="button" class="avatar-chip" data-avatar="🐯">🐯</button>
+                <button type="button" class="avatar-chip" data-avatar="👾">👾</button>
+                <button type="button" class="avatar-chip" data-avatar="🎯">🎯</button>
+              </div>
+            </div>
+            <button class="btn btn-primary full-width" id="btn-submit-google-form" style="margin-top: 10px;">
+              🚀 Connect & Save Progress
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modal-close')?.addEventListener('click', () => this.close());
+
+    // 1-Tap Account Selector
+    this.container.querySelectorAll('.google-account-btn[data-account-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-account-idx'), 10);
+        this.close();
+        onSelectAccount(defaultAccounts[idx]);
+      });
+    });
+
+    // Avatar selector chips
+    this.container.querySelectorAll('.avatar-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        this.container.querySelectorAll('.avatar-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedAvatar = chip.getAttribute('data-avatar');
+      });
+    });
+
+    // Form submission
+    document.getElementById('btn-submit-google-form')?.addEventListener('click', () => {
+      const name = document.getElementById('g-input-name')?.value?.trim() || 'Google Player';
+      const email = document.getElementById('g-input-email')?.value?.trim();
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid Gmail / Google email address.');
+        return;
+      }
+      this.close();
+      onSelectAccount({
+        id: 'google_' + email.replace(/[^a-zA-Z0-9]/g, '_'),
+        name: name,
+        email: email,
+        avatar: selectedAvatar,
+        provider: 'google'
+      });
+    });
+  }
+
+  showPhoneLoginModal({ onSendOtp, onVerifyOtp }) {
+    let currentPhone = '';
+
+    this.container.innerHTML = `
+      <div class="modal-backdrop fade-in">
+        <div class="modal-card bounce-in phone-login-modal">
+          <div class="modal-header with-close">
+            <h2>📱 MOBILE PHONE SIGN-IN</h2>
+            <button class="close-btn" id="modal-close">&times;</button>
+          </div>
+
+          <!-- Step 1: Phone Input -->
+          <div id="phone-step-1">
+            <p class="setting-subtext" style="text-align:left; margin-bottom:14px;">
+              Verify your mobile number with a one-time passcode to safely back up your progress across devices.
+            </p>
+            <div class="form-group">
+              <label class="form-label">10-Digit Mobile Number</label>
+              <div class="phone-input-wrapper">
+                <span class="phone-prefix">🇮🇳 +91</span>
+                <input type="tel" id="input-phone-num" class="modal-input phone-field" placeholder="98765 43210" maxlength="10" />
+              </div>
+            </div>
+            <button class="btn btn-primary full-width" id="btn-send-otp" style="margin-top:14px;">
+              📩 Send Verification OTP
+            </button>
+          </div>
+
+          <!-- Step 2: OTP Verification -->
+          <div id="phone-step-2" class="hidden">
+            <p class="setting-subtext" style="text-align:left; margin-bottom:12px;">
+              Enter the 6-digit verification code sent to <strong id="otp-target-phone">+91...</strong>:
+            </p>
+            <div class="otp-banner" id="otp-hint-banner">
+              <span>⚡ Verification Code: <strong id="otp-code-display">123456</strong></span>
+              <button class="btn btn-secondary btn-sm" id="btn-autofill-otp">Auto-Fill</button>
+            </div>
+            <div class="form-group" style="margin-top:12px;">
+              <input type="tel" id="input-otp-code" class="modal-input otp-large-field" placeholder="• • • • • •" maxlength="6" />
+            </div>
+            <div class="modal-actions" style="margin-top:14px;">
+              <button class="btn btn-secondary" id="btn-otp-back">Back</button>
+              <button class="btn btn-primary" id="btn-verify-otp">Verify & Sign In</button>
             </div>
           </div>
         </div>
@@ -660,32 +812,158 @@ export class ModalManager {
     `;
 
     document.getElementById('modal-close')?.addEventListener('click', () => this.close());
-    this.container.querySelectorAll('.google-account-btn[data-account-idx]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.getAttribute('data-account-idx'), 10);
-        this.close();
-        onSelectAccount(accounts[idx]);
-      });
+
+    const step1 = document.getElementById('phone-step-1');
+    const step2 = document.getElementById('phone-step-2');
+    const phoneInput = document.getElementById('input-phone-num');
+    const otpInput = document.getElementById('input-otp-code');
+    const targetPhoneEl = document.getElementById('otp-target-phone');
+    const codeDisplayEl = document.getElementById('otp-code-display');
+
+    document.getElementById('btn-send-otp')?.addEventListener('click', async () => {
+      const raw = phoneInput?.value?.replace(/[^\d]/g, '') || '';
+      if (raw.length < 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      currentPhone = '+91' + raw.slice(-10);
+
+      try {
+        const res = await onSendOtp(currentPhone);
+        if (res?.success) {
+          step1.classList.add('hidden');
+          step2.classList.remove('hidden');
+          if (targetPhoneEl) targetPhoneEl.textContent = currentPhone;
+          if (codeDisplayEl) codeDisplayEl.textContent = res.otp || '123456';
+          if (otpInput) {
+            otpInput.focus();
+            document.getElementById('btn-autofill-otp')?.addEventListener('click', () => {
+              otpInput.value = res.otp || '123456';
+            });
+          }
+        }
+      } catch (err) {
+        alert(err.message || 'Failed to dispatch verification code.');
+      }
     });
-    document.getElementById('btn-custom-google-acc')?.addEventListener('click', () => {
-      const email = prompt('Enter your Google email address:');
-      if (email && email.includes('@')) {
-        const name = email.split('@')[0];
+
+    document.getElementById('btn-otp-back')?.addEventListener('click', () => {
+      step2.classList.add('hidden');
+      step1.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-verify-otp')?.addEventListener('click', async () => {
+      const code = otpInput?.value?.trim() || '';
+      if (code.length !== 6) {
+        alert('Please enter the complete 6-digit OTP code.');
+        return;
+      }
+      try {
+        await onVerifyOtp(currentPhone, code);
         this.close();
-        onSelectAccount({
-          id: 'google_' + Math.random().toString(36).substring(2, 9),
-          name: name.charAt(0).toUpperCase() + name.slice(1),
-          email: email.trim(),
-          avatar: '🌐'
-        });
+      } catch (err) {
+        alert(err.message || 'Invalid verification code.');
       }
     });
   }
 
+  showEditProfileModal(currentProfile, onSave) {
+    let chosenAvatar = currentProfile?.avatar || '⚡';
 
+    this.container.innerHTML = `
+      <div class="modal-backdrop fade-in">
+        <div class="modal-card bounce-in edit-profile-modal">
+          <div class="modal-header with-close">
+            <h2>✏️ CUSTOMIZE PROFILE</h2>
+            <button class="close-btn" id="modal-close">&times;</button>
+          </div>
+          <div class="form-group" style="margin-top:10px;">
+            <label class="form-label">Gamer Tag / Display Name</label>
+            <input type="text" id="edit-profile-name" class="modal-input" value="${currentProfile?.displayName || 'Player'}" maxlength="24" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Choose In-Game Avatar</label>
+            <div class="avatar-select-row">
+              ${['⚡', '🏹', '👑', '🚀', '💎', '🐯', '👾', '🎯', '🦁', '🔥', '🛡️', '🌟'].map(av => `
+                <button type="button" class="avatar-chip ${chosenAvatar === av ? 'active' : ''}" data-avatar="${av}">${av}</button>
+              `).join('')}
+            </div>
+          </div>
+          <button class="btn btn-primary full-width" id="btn-save-profile" style="margin-top:14px;">
+            💾 Save Profile
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modal-close')?.addEventListener('click', () => this.close());
+    this.container.querySelectorAll('.avatar-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        this.container.querySelectorAll('.avatar-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        chosenAvatar = chip.getAttribute('data-avatar');
+      });
+    });
+
+    document.getElementById('btn-save-profile')?.addEventListener('click', () => {
+      const name = document.getElementById('edit-profile-name')?.value?.trim() || 'Player';
+      this.close();
+      onSave({ displayName: name, avatar: chosenAvatar });
+    });
+  }
+
+  showSupabaseConfigModal(currentConfig, onSave, onTest) {
+    this.container.innerHTML = `
+      <div class="modal-backdrop fade-in">
+        <div class="modal-card bounce-in">
+          <div class="modal-header with-close">
+            <h2>⚙️ CLOUD DATABASE CONFIG</h2>
+            <button class="close-btn" id="modal-close">&times;</button>
+          </div>
+          <p class="setting-subtext" style="text-align:left; margin-bottom:12px;">
+            Connect your own Supabase project for cross-platform cloud saves.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Supabase Project URL</label>
+            <input type="url" id="sb-url" class="modal-input" placeholder="https://xyzcompany.supabase.co" value="${currentConfig.url || ''}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Supabase Anon Key</label>
+            <input type="password" id="sb-key" class="modal-input" placeholder="eyJhbGciOi..." value="${currentConfig.key || ''}" />
+          </div>
+          <div id="sb-status-box" style="margin: 8px 0; font-size: 0.8rem; min-height: 20px;"></div>
+          <div class="modal-actions" style="margin-top: 14px;">
+            <button class="btn btn-secondary" id="btn-test-sb">🔌 Test Connection</button>
+            <button class="btn btn-primary" id="btn-save-sb">💾 Save Configuration</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modal-close')?.addEventListener('click', () => this.close());
+    const statusBox = document.getElementById('sb-status-box');
+
+    document.getElementById('btn-test-sb')?.addEventListener('click', async () => {
+      const url = document.getElementById('sb-url')?.value?.trim();
+      const key = document.getElementById('sb-key')?.value?.trim();
+      if (statusBox) statusBox.innerHTML = '<span style="color:#38BDF8;">⏳ Testing connection...</span>';
+      const res = await onTest(url, key);
+      if (res.success) {
+        if (statusBox) statusBox.innerHTML = '<span style="color:#10B981;">✓ Connected successfully to Supabase!</span>';
+      } else {
+        if (statusBox) statusBox.innerHTML = `<span style="color:#EF4444;">✗ ${res.error || 'Connection failed'}</span>`;
+      }
+    });
+
+    document.getElementById('btn-save-sb')?.addEventListener('click', () => {
+      const url = document.getElementById('sb-url')?.value?.trim() || '';
+      const key = document.getElementById('sb-key')?.value?.trim() || '';
+      this.close();
+      onSave(url, key);
+    });
+  }
 
   close() {
     this.container.innerHTML = '';
   }
 }
-

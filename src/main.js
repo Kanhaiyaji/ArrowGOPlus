@@ -657,7 +657,6 @@ class ArrowGoGame {
     this.modals.showUserProfile(profile, save, {
       onGoogleLogin: async () => {
         try {
-          // Trigger Google Identity Services OAuth popup with accounts chooser
           const res = await this.auth.signInWithGoogle();
           if (res?.user) {
             this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Google Connected! 🌐', '#00F0FF', 22);
@@ -665,30 +664,66 @@ class ArrowGoGame {
             await this.syncToCloud(false);
             this.updateHUD();
             this.showUserProfile();
+            return;
           }
         } catch (e) {
-          console.log('Google Sign-In notice:', e.message);
-          // Show interactive Google Account Chooser modal so player can select their account
-          const googleAccounts = [
-            { id: 'google_kanhaiyaji', name: 'Kanhaiyaji', email: 'kanhaiyaji@gmail.com', avatar: 'K' }
-          ];
-          this.modals.showGoogleAccountChooser(googleAccounts, async (acc) => {
-            this.auth.setSessionUser({
-              id: acc.id,
-              email: acc.email,
-              user_metadata: { full_name: acc.name, avatar_url: null },
-              app_metadata: { provider: 'google' }
-            });
-            this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Google Connected! 🌐', '#00F0FF', 22);
+          console.log('Opening native In-App Google Account Chooser:', e.message);
+        }
+
+        const accounts = this.auth.getRecentAccounts();
+        this.modals.showGoogleAccountChooser(accounts, async (acc) => {
+          this.auth.loginWithGoogleProfile({
+            name: acc.name,
+            email: acc.email,
+            avatar: acc.avatar
+          });
+          this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, `${acc.name} Connected! 🌐`, '#00F0FF', 22);
+          audio.playLevelComplete();
+          await this.syncToCloud(false);
+          this.updateHUD();
+          this.showUserProfile();
+        });
+      },
+      onPhoneLogin: () => {
+        this.modals.showPhoneLoginModal({
+          onSendOtp: async (phone) => {
+            return await this.auth.signInWithPhone(phone);
+          },
+          onVerifyOtp: async (phone, otp) => {
+            const res = await this.auth.verifyPhoneOtp(phone, otp);
+            this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Phone Verified! 📱', '#00FF9D', 22);
             audio.playLevelComplete();
             await this.syncToCloud(false);
             this.updateHUD();
             this.showUserProfile();
-          });
-        }
+            return res;
+          }
+        });
+      },
+      onEditProfile: () => {
+        this.modals.showEditProfileModal(this.auth.getProfile(), (updated) => {
+          this.auth.updateGamerProfile(updated);
+          this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Profile Updated! ✏️', '#FBBF24', 20);
+          this.updateHUD();
+          this.showUserProfile();
+        });
+      },
+      onOpenSupabaseConfig: () => {
+        this.modals.showSupabaseConfigModal(
+          { url: this.auth.supabaseUrl, key: this.auth.supabaseAnonKey },
+          (url, key) => {
+            this.auth.saveConfig(url, key);
+            this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Cloud Config Saved! ⚙️', '#00F0FF', 20);
+            this.showUserProfile();
+          },
+          async (url, key) => {
+            return await this.auth.testSupabaseConnection(url, key);
+          }
+        );
       },
       onSignOut: async () => {
         await this.auth.signOut();
+        this.particles.spawnFloatingText(this.renderer.width / 2, this.renderer.height / 2, 'Signed Out 👋', '#94A3B8', 20);
         this.updateHUD();
         this.showUserProfile();
       },

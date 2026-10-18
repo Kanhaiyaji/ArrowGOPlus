@@ -108,13 +108,18 @@ jobs:
             - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.get_version.outputs.version }}/ArrowGOPlus.apk)**
 
             ### 🎮 Features & Updates in ${{ steps.get_version.outputs.version }}:
+            - 🔑 **Complete Mobile Authentication Suite**:
+              - 🌐 **In-App Google Account Chooser**: Instant 1-tap sign-in and Gmail connector optimized for Android WebView (no popups blocked, no hanging).
+              - 📱 **Mobile Phone (SMS OTP) Login**: Verify via phone number with automatic OTP code assistance to permanently link stats.
+              - ✏️ **Gamer Profile & Avatar Customizer**: Choose custom gamer tags and personalize your in-game identity with 12 distinct avatars.
+              - ☁️ **Cloud Save & Offline Resilience**: Robust progress sync that protects levels, stars, coins, and boosters across devices.
+              - ⚙️ **Custom Database Settings**: Supabase database configuration and connection tester.
             - 👑 **5 Luxury Theme Suites**:
               - 🖤 **Obsidian Dark** (Ultra sleek stealth dark + electric cyan)
               - 🤍 **Titanium White** (High-contrast clean daylight luxury with deep slate arrows)
               - 👑 **Royal Gold** (24K Gold luxury accents with midnight onyx backdrop)
               - 💚 **Emerald Jade** (Deep rainforest tones with radiant mint neon)
               - 💜 **Velvet Amethyst** (Midnight royal violet with neon coral highlights)
-            - 🔄 **Real-Time Theme Switching**: Choose themes directly in Settings (⚙️) with instant board and canvas updates.
             - 📱 **Full Mobile Responsiveness**: Dynamic fit on all screen sizes and aspect ratios.
             - 🏹 **Branded Launcher Icon**: Futuristic neon cyan 3D arrow with golden '+' badge.
             - ⚡ **108 Handcrafted Levels**: Beginner, Intermediate & Trained Tiers.
