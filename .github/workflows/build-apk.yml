@@ -87,21 +87,29 @@ jobs:
           path: ArrowGOPlus.apk
           retention-days: 30
 
+      - name: Extract Project Version
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+
       - name: Create or Update GitHub Release
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}
-          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'Arrow GO+ v1.0.0 (Latest APK)' }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.get_version.outputs.version }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('Arrow GO+ {0} (Latest APK)', steps.get_version.outputs.version) }}
           body: |
-            ## 🏹 Arrow GO+ Android Mobile App
+            ## 🏹 Arrow GO+ Android Mobile App (${{ steps.get_version.outputs.version }})
 
             Official Android APK release built automatically by GitHub Actions CI/CD.
 
             ### 📲 Direct APK Download (Single Tap Install):
-            - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}/ArrowGOPlus.apk)**
+            - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.get_version.outputs.version }}/ArrowGOPlus.apk)**
 
-            ### 🎮 Features:
+            ### 🎮 Features & Updates in ${{ steps.get_version.outputs.version }}:
+            - **New Branded Icon & Adaptive Launcher**: Futuristic neon cyan 3D arrow with golden '+' badge
+            - **Offline WebView Mode**: Complete standalone gameplay without connection errors
             - **108 Handcrafted Levels** across 3 Tiers (Beginner, Intermediate, Trained)
             - **Google OAuth Login** via Supabase
             - **Cloud Save & Sync** across sessions
