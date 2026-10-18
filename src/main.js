@@ -87,8 +87,24 @@ class ArrowGoGame {
     // Initial cloud sync
     this.initCloudSync();
 
+    // Initialize luxury theme
+    this.applyTheme(this.storage.currentTheme || 'dark');
+
     // Main animation loop
     requestAnimationFrame((t) => this.gameLoop(t));
+  }
+
+  applyTheme(themeKey) {
+    const validThemes = ['dark', 'obsidian', 'light', 'platinum', 'gold', 'emerald', 'sunset', 'cyber'];
+    const chosen = validThemes.includes(themeKey) ? themeKey : 'dark';
+    const normalized = (chosen === 'obsidian' || chosen === 'dark') ? 'dark' : ((chosen === 'platinum' || chosen === 'light') ? 'light' : chosen);
+
+    document.body.className = `theme-${normalized}`;
+    this.renderer?.setTheme(normalized);
+    this.vortexRenderer?.setTheme(normalized);
+
+    this.storage.currentTheme = chosen;
+    StorageManager.save(this.storage);
   }
 
   handleResize() {
@@ -730,6 +746,10 @@ class ArrowGoGame {
         this.maxLives = save.zenMode ? Infinity : 3;
         this.lives = this.maxLives;
         this.updateHUD();
+      }
+      if (updated.currentTheme) {
+        this.applyTheme(updated.currentTheme);
+        save.currentTheme = updated.currentTheme;
       }
       StorageManager.save(save);
     });

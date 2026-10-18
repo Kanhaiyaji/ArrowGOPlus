@@ -307,12 +307,28 @@ export class ModalManager {
               </label>
             </div>
             <div class="setting-item column">
-              <span>Theme</span>
+              <span style="font-weight:700;">Theme & Aesthetic</span>
               <div class="theme-picker">
-                <button class="theme-btn ${state.currentTheme === 'dark' ? 'active' : ''}" data-theme="dark">Midnight</button>
-                <button class="theme-btn ${state.currentTheme === 'light' ? 'active' : ''}" data-theme="light">Daylight</button>
-                <button class="theme-btn ${state.currentTheme === 'sunset' ? 'active' : ''}" data-theme="sunset">Sunset</button>
-                <button class="theme-btn ${state.currentTheme === 'cyber' ? 'active' : ''}" data-theme="cyber">Cyber</button>
+                <button class="theme-btn ${!state.currentTheme || state.currentTheme === 'dark' || state.currentTheme === 'obsidian' ? 'active' : ''}" data-theme="dark">
+                  <span class="theme-dot" style="background:#00F0FF; box-shadow:0 0 6px #00F0FF;"></span>
+                  <span>Obsidian</span>
+                </button>
+                <button class="theme-btn ${state.currentTheme === 'light' || state.currentTheme === 'platinum' ? 'active' : ''}" data-theme="light">
+                  <span class="theme-dot" style="background:#FFFFFF; border:1px solid #94A3B8; box-shadow:0 0 6px rgba(255,255,255,0.6);"></span>
+                  <span>Titanium</span>
+                </button>
+                <button class="theme-btn ${state.currentTheme === 'gold' ? 'active' : ''}" data-theme="gold">
+                  <span class="theme-dot" style="background:#FBBF24; box-shadow:0 0 6px #FBBF24;"></span>
+                  <span>Royal Gold</span>
+                </button>
+                <button class="theme-btn ${state.currentTheme === 'emerald' ? 'active' : ''}" data-theme="emerald">
+                  <span class="theme-dot" style="background:#00FF9D; box-shadow:0 0 6px #00FF9D;"></span>
+                  <span>Emerald</span>
+                </button>
+                <button class="theme-btn ${state.currentTheme === 'sunset' ? 'active' : ''}" data-theme="sunset">
+                  <span class="theme-dot" style="background:#C084FC; box-shadow:0 0 6px #C084FC;"></span>
+                  <span>Amethyst</span>
+                </button>
               </div>
             </div>
 

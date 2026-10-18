@@ -108,13 +108,18 @@ jobs:
             - ⬇️ **[ArrowGOPlus.apk](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.get_version.outputs.version }}/ArrowGOPlus.apk)**
 
             ### 🎮 Features & Updates in ${{ steps.get_version.outputs.version }}:
-            - **New Branded Icon & Adaptive Launcher**: Futuristic neon cyan 3D arrow with golden '+' badge
-            - **Offline WebView Mode**: Complete standalone gameplay without connection errors
-            - **108 Handcrafted Levels** across 3 Tiers (Beginner, Intermediate, Trained)
-            - **Google OAuth Login** via Supabase
-            - **Cloud Save & Sync** across sessions
-            - **Web Audio & Haptic Feedback**
-            - **Offline Puzzle Engine & Level Editor**
+            - 👑 **5 Luxury Theme Suites**:
+              - 🖤 **Obsidian Dark** (Ultra sleek stealth dark + electric cyan)
+              - 🤍 **Titanium White** (High-contrast clean daylight luxury with deep slate arrows)
+              - 👑 **Royal Gold** (24K Gold luxury accents with midnight onyx backdrop)
+              - 💚 **Emerald Jade** (Deep rainforest tones with radiant mint neon)
+              - 💜 **Velvet Amethyst** (Midnight royal violet with neon coral highlights)
+            - 🔄 **Real-Time Theme Switching**: Choose themes directly in Settings (⚙️) with instant board and canvas updates.
+            - 📱 **Full Mobile Responsiveness**: Dynamic fit on all screen sizes and aspect ratios.
+            - 🏹 **Branded Launcher Icon**: Futuristic neon cyan 3D arrow with golden '+' badge.
+            - ⚡ **108 Handcrafted Levels**: Beginner, Intermediate & Trained Tiers.
+            - 🌐 **Offline WebView**: 100% standalone gameplay without network dependency.
+            - ☁️ **Cloud Sync & Google Login**: Preserves progress and stats seamlessly.
           files: ArrowGOPlus.apk
           prerelease: false
           make_latest: true

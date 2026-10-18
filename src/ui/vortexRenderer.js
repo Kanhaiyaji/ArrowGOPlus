@@ -25,6 +25,10 @@ export class VortexRenderer {
     this.blocked.clear();
   }
 
+  setTheme(themeKey) {
+    this.themeKey = themeKey;
+  }
+
   resize(viewportWidth, viewportHeight, numRings = 3) {
     const w = Math.max(280, viewportWidth || 360);
     const h = Math.max(300, viewportHeight || 480);

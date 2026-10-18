@@ -32,6 +32,10 @@ export class NeonMazeRenderer {
     this.blocked.clear();
   }
 
+  setTheme(themeKey) {
+    this.themeKey = themeKey;
+  }
+
   resize(viewportWidth, viewportHeight, gridWidth, gridHeight) {
     const w = Math.max(280, viewportWidth || 360);
     const h = Math.max(300, viewportHeight || 480);
@@ -221,9 +225,15 @@ export class NeonMazeRenderer {
     // 1. Clear background (Deep dark space blue)
     ctx.clearRect(0, 0, this.width, this.height);
 
-    // Subtle diagonal arrow watermark pattern (matching Google Play Screenshot 1)
+    // Subtle diagonal arrow watermark pattern
     ctx.save();
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.04)';
+    let watermarkColor = 'rgba(56, 189, 248, 0.04)';
+    if (this.themeKey === 'light') watermarkColor = 'rgba(15, 23, 42, 0.035)';
+    else if (this.themeKey === 'gold') watermarkColor = 'rgba(251, 191, 36, 0.04)';
+    else if (this.themeKey === 'emerald') watermarkColor = 'rgba(0, 255, 157, 0.04)';
+    else if (this.themeKey === 'sunset') watermarkColor = 'rgba(192, 132, 252, 0.04)';
+
+    ctx.strokeStyle = watermarkColor;
     ctx.lineWidth = 1.5;
     for (let x = -this.height; x < this.width + this.height; x += 90) {
       ctx.beginPath();
@@ -304,12 +314,25 @@ export class NeonMazeRenderer {
       ctx.restore();
     } else {
       // Standard rectangular grid dots
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.22)';
+      let dotColor = 'rgba(56, 189, 248, 0.22)';
+      let dotRadius = 2;
+      if (this.themeKey === 'light') {
+        dotColor = 'rgba(15, 23, 42, 0.22)';
+        dotRadius = 2.5;
+      } else if (this.themeKey === 'gold') {
+        dotColor = 'rgba(251, 191, 36, 0.28)';
+      } else if (this.themeKey === 'emerald') {
+        dotColor = 'rgba(0, 255, 157, 0.26)';
+      } else if (this.themeKey === 'sunset') {
+        dotColor = 'rgba(192, 132, 252, 0.25)';
+      }
+
+      ctx.fillStyle = dotColor;
       for (let gy = 0; gy < grid.height; gy++) {
         for (let gx = 0; gx < grid.width; gx++) {
           const p = this.gridToScreen(gx, gy);
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -410,6 +433,8 @@ export class NeonMazeRenderer {
     let strokeColor = '#FFFFFF';
     let glowColor = 'rgba(255, 255, 255, 0.45)';
 
+    const isLight = this.themeKey === 'light';
+
     if (isBlocked) {
       strokeColor = '#FF0055';
       glowColor = '#FF0055';
@@ -420,6 +445,13 @@ export class NeonMazeRenderer {
     } else if (arrow.color && arrow.color !== '#FFFFFF') {
       strokeColor = arrow.color;
       glowColor = arrow.color;
+    } else if (isLight) {
+      // High contrast deep obsidian slate arrow on light background
+      strokeColor = '#0F172A';
+      glowColor = 'rgba(15, 23, 42, 0.35)';
+    } else if (this.themeKey === 'gold') {
+      strokeColor = '#FBBF24';
+      glowColor = 'rgba(251, 191, 36, 0.5)';
     }
 
     const card = CARDINALS[arrow.dir];

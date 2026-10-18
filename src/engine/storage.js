@@ -13,7 +13,7 @@ const DEFAULT_STATE = {
     undo: 5,
     skip: 1
   },
-  currentTheme: 'cyber', // 'cyber' | 'amber' | 'synthwave' | 'matrix'
+  currentTheme: 'dark', // 'dark' | 'light' | 'gold' | 'emerald' | 'sunset'
   soundEnabled: true,
   musicEnabled: true,
   hapticsEnabled: true,
