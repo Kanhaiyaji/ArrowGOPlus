@@ -49,13 +49,18 @@ export class NeonMazeRenderer {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(dpr, dpr);
 
-    const padding = 28;
-    const availW = Math.max(100, w - padding * 2);
-    const availH = Math.max(100, h - padding * 2);
+    // Responsive margins: 3.5% of width and height (max 20px, min 10px)
+    const paddingX = Math.min(20, Math.max(10, Math.floor(w * 0.035)));
+    const paddingY = Math.min(24, Math.max(12, Math.floor(h * 0.035)));
+
+    const availW = Math.max(100, w - paddingX * 2);
+    const availH = Math.max(100, h - paddingY * 2);
 
     const sizeW = availW / gw;
     const sizeH = availH / gh;
-    this.cellSize = Math.max(20, Math.min(sizeW, sizeH, 52));
+    
+    // Dynamic cell size: Allow smaller grids (e.g. 5x5) to scale up to 74px so arrows fill the phone screen!
+    this.cellSize = Math.max(22, Math.min(sizeW, sizeH, 74));
 
     const boardW = this.cellSize * gw;
     const boardH = this.cellSize * gh;

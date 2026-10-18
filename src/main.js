@@ -73,6 +73,13 @@ class ArrowGoGame {
     this.setupEventListeners();
     this.handleResize();
     window.addEventListener('resize', () => this.handleResize());
+    window.addEventListener('orientationchange', () => setTimeout(() => this.handleResize(), 150));
+
+    // Dynamic resize observer on board container for mobile orientation/keyboard/folding
+    const container = document.getElementById('board-container');
+    if (container && window.ResizeObserver) {
+      new ResizeObserver(() => this.handleResize()).observe(container);
+    }
 
     // Load initial level
     this.loadCampaignLevel(this.currentLevelId);
@@ -755,19 +762,39 @@ class ArrowGoGame {
 
   updateHUD() {
     const titleEl = document.getElementById('hud-level-title');
-    if (titleEl) {
-      const diffClass = (this.levelDef?.difficulty || 'novice').toLowerCase().replace(' ', '-');
-      const diffBadge = this.levelDef?.difficulty ? `<span class="diff-badge ${diffClass}">${this.levelDef.difficulty}</span>` : '';
+    const topMetaEl = document.getElementById('hud-top-meta');
+    const diffBadgeEl = document.getElementById('hud-diff-badge');
 
-      if (this.mode === 'campaign') {
-        const cat = this.levelDef?.category || (this.currentLevelId <= 36 ? 'Beginner' : (this.currentLevelId <= 72 ? 'Intermediate' : 'Trained'));
-        const catIcon = cat === 'Beginner' ? '🔰' : (cat === 'Intermediate' ? '⚡' : '👑');
-        const catBadge = `<span class="hud-cat-pill ${cat.toLowerCase()}">${catIcon} ${cat}</span>`;
-        titleEl.innerHTML = `${catBadge} <span class="hud-lvl-num">Level ${this.currentLevelId}</span> <span class="hud-lvl-name">${this.levelDef?.name || ''}</span> ${diffBadge}`;
-      } else if (this.mode === 'vortex') {
-        titleEl.innerHTML = `<span class="hud-cat-pill vortex">⭕ Vortex</span> <span class="hud-lvl-num">Ring ${this.vortexStage}</span> ${diffBadge}`;
-      } else {
-        titleEl.innerHTML = `<span class="hud-cat-pill endless">♾️ Endless</span> <span class="hud-lvl-num">Stage ${this.endlessStage}</span> ${diffBadge}`;
+    const diff = this.levelDef?.difficulty || 'novice';
+    const diffClass = diff.toLowerCase().replace(/\s+/g, '-');
+
+    if (diffBadgeEl) {
+      diffBadgeEl.textContent = diff.toUpperCase();
+      diffBadgeEl.className = `diff-badge ${diffClass}`;
+    }
+
+    if (this.mode === 'campaign') {
+      const cat = this.levelDef?.category || (this.currentLevelId <= 36 ? 'Beginner' : (this.currentLevelId <= 72 ? 'Intermediate' : 'Trained'));
+      const catIcon = cat === 'Beginner' ? '🔰' : (cat === 'Intermediate' ? '⚡' : '👑');
+      if (topMetaEl) {
+        topMetaEl.innerHTML = `<span class="hud-cat-pill ${cat.toLowerCase()}">${catIcon} ${cat}</span> <span class="hud-lvl-name">${this.levelDef?.name || ''}</span>`;
+      }
+      if (titleEl) {
+        titleEl.textContent = `Level ${this.currentLevelId}`;
+      }
+    } else if (this.mode === 'vortex') {
+      if (topMetaEl) {
+        topMetaEl.innerHTML = `<span class="hud-cat-pill vortex">⭕ Vortex Mode</span>`;
+      }
+      if (titleEl) {
+        titleEl.textContent = `Ring ${this.vortexStage}`;
+      }
+    } else {
+      if (topMetaEl) {
+        topMetaEl.innerHTML = `<span class="hud-cat-pill endless">♾️ Endless Mode</span>`;
+      }
+      if (titleEl) {
+        titleEl.textContent = `Stage ${this.endlessStage}`;
       }
     }
 

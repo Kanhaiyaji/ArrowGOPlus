@@ -41,8 +41,8 @@ export class VortexRenderer {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(dpr, dpr);
 
-    const maxR = Math.min(w, h) * 0.44;
-    this.R_base = Math.max(48, maxR * 0.32);
+    const maxR = Math.min(w, h) * 0.46;
+    this.R_base = Math.max(42, maxR * 0.28);
     this.dR = Math.max(26, (maxR - this.R_base) / Math.max(1, numRings - 1));
   }
 
